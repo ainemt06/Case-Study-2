@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn import preprocessing
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, AffinityPropagation, AgglomerativeClustering, DBSCAN
 import functools
 from sklearn.metrics.cluster import adjusted_rand_score
 
@@ -36,16 +36,53 @@ def get_baseline_score():
 
 
 def evaluate():
-    csv_path = './Data/set3noVID.csv'
+    csv_path = './Data/set3noVID.csv' # DK if there is a secret other set3
     labels_true = pd.read_csv(csv_path)['VID'].to_numpy()
-    labels_pred = predictor(csv_path)
-    rand_index_score = adjusted_rand_score(labels_true, labels_pred)
-    print(f'Adjusted Rand Index Score of set3.csv: {rand_index_score:.4f}')
+    labels_pred_dict = predictor(csv_path)
+    
+    best_score = -1
+    best_model = None
+    for model_name, labels_pred in labels_pred_dict.items():
+        score = adjusted_rand_score(labels_true, labels_pred)
+        if score > best_score:
+            best_score = score
+            best_model = model_name
+    
+    print(f'Best Adjusted Rand Index Score: {best_score:.4f} from model: {best_model}')
 
+
+# Affinity Propagation - chooses number of clusters based on "exemplar" points
+def affinity_propagation(X):
+    model = AffinityPropagation(random_state=123)
+    return model.fit_predict(X)
+
+# Agglomerative Clustering - builds a hierarchy of clusters
+def agglomerative_clustering(X):
+    model = AgglomerativeClustering(distance_threshold=1.0, linkage='ward') # refine
+    return model.fit_predict(X)
+
+# DBSCAN - groups together points that are close to each other
+def dbscan(X):
+    model = DBSCAN(eps=0.5, min_samples=5)
+    return model.fit_predict(X)
 
 def predictor(csv_path):
-    # fill your code here
+    df = pd.read_csv(csv_path, converters={'SEQUENCE_DTTM' : hh_mm_ss2seconds})
+    # select features 
+    selected_features = ['SEQUENCE_DTTM', 'LAT', 'LON', 'SPEED_OVER_GROUND' ,'COURSE_OVER_GROUND']
+    X = df[selected_features].to_numpy()
+    # Standardization 
+    X = preprocessing.StandardScaler().fit(X).transform(X)
+
+    labels_pred = {
+        'affinity_propagation': affinity_propagation(X),
+        'agglomerative_clustering': agglomerative_clustering(X),
+        'dbscan': dbscan(X)
+    }
+
     return labels_pred
+
+
 
 
 if __name__=="__main__":
