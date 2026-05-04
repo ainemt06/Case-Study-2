@@ -36,7 +36,7 @@ def get_baseline_score():
 
 
 def evaluate():
-    csv_path = './Data/set3.csv'
+    csv_path = './Data/set2.csv'
     labels_true = pd.read_csv(csv_path)['VID'].to_numpy()
     labels_pred_dict = predictor(csv_path)
     
@@ -53,12 +53,12 @@ def evaluate():
 
 # Affinity Propagation - chooses number of clusters based on "exemplar" points
 def affinity_propagation(X):
-    model = AffinityPropagation(random_state=123)
+    model = AffinityPropagation(damping=0.9, max_iter=200, convergence_iter=15, random_state=123)
     return model.fit_predict(X)
 
 # Agglomerative Clustering - builds a hierarchy of clusters
 def agglomerative_clustering(X):
-    model = AgglomerativeClustering(distance_threshold=1.0, linkage='ward') # refine
+    model = AgglomerativeClustering(n_clusters=None, distance_threshold=1.0, linkage='ward') # refine
     return model.fit_predict(X)
 
 # DBSCAN - groups together points that are close to each other
