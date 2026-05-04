@@ -36,7 +36,7 @@ def get_baseline_score():
 
 
 def evaluate():
-    csv_path = './Data/set3noVID.csv' # DK if there is a secret other set3
+    csv_path = './Data/set3.csv'
     labels_true = pd.read_csv(csv_path)['VID'].to_numpy()
     labels_pred_dict = predictor(csv_path)
     
