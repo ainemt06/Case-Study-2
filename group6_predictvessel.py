@@ -8,7 +8,6 @@ from sklearn.metrics.cluster import adjusted_rand_score
 def hh_mm_ss2seconds(hh_mm_ss):
     return functools.reduce(lambda acc, x: acc*60 + x, map(int, hh_mm_ss.split(':')))
 
-
 def predictor_baseline(csv_path):
     # load data and convert hh:mm:ss to seconds
     df = pd.read_csv(csv_path, converters={'SEQUENCE_DTTM' : hh_mm_ss2seconds})
@@ -53,17 +52,17 @@ def evaluate():
 
 # Affinity Propagation - chooses number of clusters based on "exemplar" points
 def affinity_propagation(X):
-    model = AffinityPropagation(damping=0.9, max_iter=200, convergence_iter=15, random_state=123)
+    model = AffinityPropagation(damping=.9, max_iter=200, convergence_iter=15, random_state=123)
     return model.fit_predict(X)
 
 # Agglomerative Clustering - builds a hierarchy of clusters
 def agglomerative_clustering(X):
-    model = AgglomerativeClustering(n_clusters=None, distance_threshold=1.0, linkage='ward') # refine
+    model = AgglomerativeClustering(n_clusters=None, distance_threshold=10, linkage='ward') # refine
     return model.fit_predict(X)
 
 # DBSCAN - groups together points that are close to each other
 def dbscan(X):
-    model = DBSCAN(eps=0.5, min_samples=5)
+    model = DBSCAN(eps=.5, min_samples=5)
     return model.fit_predict(X)
 
 def predictor(csv_path):
@@ -81,8 +80,6 @@ def predictor(csv_path):
     }
 
     return labels_pred
-
-
 
 
 if __name__=="__main__":
