@@ -35,7 +35,7 @@ def get_baseline_score():
 
 
 def evaluate():
-    csv_path = './Data/set2.csv'
+    csv_path = './Data/set3.csv'
     labels_true = pd.read_csv(csv_path)['VID'].to_numpy()
     labels_pred_dict = predictor(csv_path)
     
@@ -73,10 +73,18 @@ def predictor(csv_path):
     # Standardization 
     X = preprocessing.StandardScaler().fit(X).transform(X)
 
+    aprop = affinity_propagation(X)
+    agg = agglomerative_clustering(X)
+    db = dbscan(X)
+
+    print("Predicted number of clusters for affinity propagation:", len(np.unique(aprop)))
+    print("Predicted number of clusters for agglomerative clustering:", len(np.unique(agg)))
+    print("Predicted number of clusters for DBSCAN:", len(np.unique(db)))
+
     labels_pred = {
-        'affinity_propagation': affinity_propagation(X),
-        'agglomerative_clustering': agglomerative_clustering(X),
-        'dbscan': dbscan(X)
+        'affinity_propagation': aprop,
+        'agglomerative_clustering': agg,
+        'dbscan': db
     }
 
     return labels_pred
