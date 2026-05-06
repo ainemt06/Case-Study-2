@@ -35,7 +35,7 @@ def get_baseline_score():
 
 
 def evaluate():
-    csv_path = './Data/set1.csv'
+    csv_path = './Data/set3noVID.csv'
     labels_true = pd.read_csv(csv_path)['VID'].to_numpy()
     labels_pred_dict = predictor(csv_path, labels_true)
     
@@ -153,6 +153,8 @@ def predictor(csv_path, labels_true=None):
     X = df[selected_features].to_numpy()
     # Standardization 
     X = preprocessing.StandardScaler().fit(X).transform(X)
+
+    # Removed affinity propagation and optics because they took too much time and performed poorly
 
     #aprop = affinity_propagation(X, labels_true)
     agg = agglomerative_clustering(X, labels_true)
