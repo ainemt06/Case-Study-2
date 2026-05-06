@@ -84,7 +84,7 @@ def agglomerative_clustering(X, labels_true=None):
     best_score = -1
     best_labels = None
     best_params = None
-    distance_thresholds = [5, 10, 15, 20, 25]
+    distance_thresholds = [25, 30, 35, 40, 45, 50]
 
     for distance_threshold in distance_thresholds:
         model = AgglomerativeClustering(n_clusters=None, distance_threshold=distance_threshold, linkage='ward')
